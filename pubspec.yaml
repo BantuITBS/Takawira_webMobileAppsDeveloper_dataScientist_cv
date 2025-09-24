@@ -1,0 +1,40 @@
+name: takawira_cv
+description: A Flutter-based interactive CV showcasing Takawira Mazando's expertise in Python, Data Science, and Data Analytics
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  font_awesome_flutter: ^10.7.0
+  url_launcher: ^6.3.0
+  responsive_builder: ^0.7.0
+  google_fonts: ^6.2.1 # Kept for flexibility or fallback font support
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/profile.jpeg
+    - assets/performa360.jpeg
+    - assets/afrodating.jpeg
+    - assets/webcraft.jpeg
+    - assets/aupair_connect.jpeg
+    - assets/landlink.jpeg
+    - assets/surrolink.jpeg
+    - assets/TE.jpeg
+    - assets/cv.jpeg
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Roboto-Italic.ttf
+          style: italic
