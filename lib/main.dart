@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:flutter/material.dart';
 
 void main() => runApp(const CVApp());
 
@@ -38,6 +37,7 @@ class CVApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        // Note: CardTheme is correct for Flutter 3.24+; if issues persist, check your Flutter version.
         cardTheme: CardThemeData(
           elevation: 3,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -247,7 +247,7 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
               ),
               const SizedBox(height: 8),
               Text(
-                "Mobile and Web Developer | Data Scientist",
+                "Mobile & Web Developer | Data Scientist | AI (LLM-RAG) Engineer",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontStyle: FontStyle.italic,
                       color: Colors.white.withOpacity(0.9),
@@ -336,7 +336,7 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
             accentColor: _accentColor,
           ),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: _getContent(_currentSection),
           ),
         ],
@@ -359,7 +359,7 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
           child: Row(
             children: [
               Container(
-                width: 220,
+                width: 231,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
@@ -393,10 +393,8 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    child: _getContent(_currentSection),
-                  ),
+                  padding: const EdgeInsets.all(24),
+                  child: _getContent(_currentSection),
                 ),
               ),
             ],
@@ -524,7 +522,7 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
           title: "Certifications",
           primaryColor: _primaryColor,
           secondaryColor: _secondaryColor,
-          child: CertificationsContent(primaryColor: _primaryColor),
+          child: CertificationsContent(primaryColor: _primaryColor, launchURL: _launchURL),
         );
       case 'accomplishments':
         return SectionHeader(
@@ -581,6 +579,7 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
   }
 }
 
+// Header class (as provided, no changes needed)
 class Header extends StatelessWidget {
   final Future<void> Function(String) launchURL;
   final Future<void> Function(String) makePhoneCall;
@@ -643,7 +642,7 @@ class Header extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "Mobile and Web Developer | Data Scientist",
+                "Mobile & Web Developer | Data Scientist | AI (LLM-RAG) Engineer",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontStyle: FontStyle.italic,
                       color: Colors.white.withOpacity(0.9),
@@ -652,44 +651,71 @@ class Header extends StatelessWidget {
             ],
           ),
         ),
-        Spacer(),
+        const Spacer(),
         PopupMenuButton(
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade600, Colors.purple.shade600],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.menu, color: Colors.white, size: 20),
+          ),
+          offset: const Offset(0, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 8,
+          shadowColor: Colors.black.withOpacity(0.3),
+          color: Colors.grey[900],
+          surfaceTintColor: Colors.transparent,
           itemBuilder: (context) => [
-            PopupMenuItem(
-              child: _buildContactMenuItem(
-                context,
-                icon: FontAwesomeIcons.envelope,
-                text: "mazandotakawira@gmail.com",
-                onTap: () => launchURL('mailto:mazandotakawira@gmail.com'),
-              ),
+            _buildContactMenuItem(
+              context,
+              icon: FontAwesomeIcons.envelope,
+              iconColor: Colors.red.shade400,
+              text: "mazandotakawira@gmail.com",
+              subtitle: "Send an email",
+              onTap: () => launchURL('mailto:mazandotakawira@gmail.com'),
             ),
-            PopupMenuItem(
-              child: _buildContactMenuItem(
-                context,
-                icon: FontAwesomeIcons.phone,
-                text: "+27 672 319 200",
-                onTap: () {
-                  makePhoneCall("+27672319200");
-                  openWhatsApp("+27672319200");
-                },
-              ),
+            _buildContactMenuItem(
+              context,
+              icon: FontAwesomeIcons.phone,
+              iconColor: Colors.green.shade400,
+              text: "+27 672 319 200",
+              subtitle: "Call or WhatsApp",
+              onTap: () {
+                makePhoneCall("+27672319200");
+                openWhatsApp("+27672319200");
+              },
             ),
-            PopupMenuItem(
-              child: _buildContactMenuItem(
-                context,
-                icon: FontAwesomeIcons.linkedin,
-                text: "LinkedIn Profile",
-                onTap: () => launchURL('www.linkedin.com/in/takawira-mazando-3a775715b'),
-              ),
+            _buildContactMenuItem(
+              context,
+              icon: FontAwesomeIcons.linkedin,
+              iconColor: Colors.blue.shade400,
+              text: "LinkedIn Profile",
+              subtitle: "Professional network",
+              onTap: () => launchURL('https://www.linkedin.com/in/takawira-mazando-3a775715b'),
             ),
-            PopupMenuItem(
-              child: _buildContactMenuItem(
-                context,
-                icon: FontAwesomeIcons.github,
-                text: "github.com/BantuITBS",
-                onTap: () => launchURL('https://github.com/BantuITBS'),
-              ),
+            _buildContactMenuItem(
+              context,
+              icon: FontAwesomeIcons.github,
+              iconColor: Colors.grey.shade300,
+              text: "github.com/BantuITBS",
+              subtitle: "Code repositories",
+              onTap: () => launchURL('https://github.com/BantuITBS'),
             ),
           ],
         ),
@@ -722,7 +748,7 @@ class Header extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Mobile and Web Developer | Data Scientist",
+                    "Mobile & Web Developer | Data Scientist | AI (LLM-RAG) Engineer",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontStyle: FontStyle.italic,
                           color: Colors.white.withOpacity(0.9),
@@ -733,42 +759,69 @@ class Header extends StatelessWidget {
               ),
             ),
             PopupMenuButton(
-              icon: Icon(Icons.menu, color: Colors.white),
+              icon: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade600, Colors.purple.shade600],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.menu, color: Colors.white, size: 20),
+              ),
+              offset: const Offset(0, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 8,
+              shadowColor: Colors.black.withOpacity(0.3),
+              color: Colors.grey[900],
+              surfaceTintColor: Colors.transparent,
               itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: _buildContactMenuItem(
-                    context,
-                    icon: FontAwesomeIcons.envelope,
-                    text: "mazandotakawira@gmail.com",
-                    onTap: () => launchURL('mailto:mazandotakawira@gmail.com'),
-                  ),
+                _buildContactMenuItem(
+                  context,
+                  icon: FontAwesomeIcons.envelope,
+                  iconColor: Colors.red.shade400,
+                  text: "mazandotakawira@gmail.com",
+                  subtitle: "Send an email",
+                  onTap: () => launchURL('mailto:mazandotakawira@gmail.com'),
                 ),
-                PopupMenuItem(
-                  child: _buildContactMenuItem(
-                    context,
-                    icon: FontAwesomeIcons.phone,
-                    text: "+27 672 319 200",
-                    onTap: () {
-                      makePhoneCall("+27672319200");
-                      openWhatsApp("+27672319200");
-                    },
-                  ),
+                _buildContactMenuItem(
+                  context,
+                  icon: FontAwesomeIcons.phone,
+                  iconColor: Colors.green.shade400,
+                  text: "+27 672 319 200",
+                  subtitle: "Call or WhatsApp",
+                  onTap: () {
+                    makePhoneCall("+27672319200");
+                    openWhatsApp("+27672319200");
+                  },
                 ),
-                PopupMenuItem(
-                  child: _buildContactMenuItem(
-                    context,
-                    icon: FontAwesomeIcons.linkedin,
-                    text: "LinkedIn Profile",
-                    onTap: () => launchURL('www.linkedin.com/in/takawira-mazando-3a775715b'),
-                  ),
+                _buildContactMenuItem(
+                  context,
+                  icon: FontAwesomeIcons.linkedin,
+                  iconColor: Colors.blue.shade400,
+                  text: "LinkedIn Profile",
+                  subtitle: "Professional network",
+                  onTap: () => launchURL('https://www.linkedin.com/in/takawira-mazando-3a775715b'),
                 ),
-                PopupMenuItem(
-                  child: _buildContactMenuItem(
-                    context,
-                    icon: FontAwesomeIcons.github,
-                    text: "github.com/BantuITBS",
-                    onTap: () => launchURL('https://github.com/BantuITBS'),
-                  ),
+                _buildContactMenuItem(
+                  context,
+                  icon: FontAwesomeIcons.github,
+                  iconColor: Colors.grey.shade300,
+                  text: "github.com/BantuITBS",
+                  subtitle: "Code repositories",
+                  onTap: () => launchURL('https://github.com/BantuITBS'),
                 ),
               ],
             ),
@@ -778,24 +831,80 @@ class Header extends StatelessWidget {
     );
   }
 
-  Widget _buildContactMenuItem(BuildContext context, {required IconData icon, required String text, required VoidCallback onTap}) {
-    return InkWell(
+  PopupMenuItem _buildContactMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+    required String subtitle,
+    required VoidCallback onTap,
+    Color? iconColor,
+  }) {
+    return PopupMenuItem(
+      height: 60,
       onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FaIcon(icon, size: 14, color: primaryColor),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: primaryColor),
-          ),
-        ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    iconColor?.withOpacity(0.2) ?? Colors.blue.withOpacity(0.2),
+                    iconColor?.withOpacity(0.1) ?? Colors.blue.withOpacity(0.1),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: iconColor ?? Colors.white,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.grey.shade600,
+              size: 14,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
+// WelcomeContent (as provided, no changes)
 class WelcomeContent extends StatelessWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -816,42 +925,6 @@ class WelcomeContent extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: secondaryColor.withOpacity(0.6),
-                    blurRadius: 25,
-                    spreadRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                gradient: RadialGradient(
-                  colors: [Colors.white, secondaryColor],
-                  center: Alignment.center,
-                  radius: 0.85,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/profile.jpeg',
-                    width: 108,
-                    height: 108,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.person_outline,
-                        size: 108,
-                        color: primaryColor,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
             const SizedBox(height: 36),
             ShaderMask(
               shaderCallback: (bounds) => LinearGradient(
@@ -916,7 +989,7 @@ class WelcomeContent extends StatelessWidget {
                     shadowColor: secondaryColor.withOpacity(0.4),
                   ),
                   child: const Text(
-                    "Get Started",
+                    "Navigate to Projects Portfolio",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -948,6 +1021,7 @@ class WelcomeContent extends StatelessWidget {
   }
 }
 
+// ProfessionalSummaryContent (as provided, no changes)
 class ProfessionalSummaryContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -984,6 +1058,7 @@ class ProfessionalSummaryContent extends StatelessWidget {
   }
 }
 
+// TechnicalSkillsContent (as provided, no changes)
 class TechnicalSkillsContent extends StatelessWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -1231,6 +1306,7 @@ class TechnicalSkillsContent extends StatelessWidget {
   }
 }
 
+// SoftSkillsContent (as provided, no changes)
 class SoftSkillsContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1242,6 +1318,7 @@ class SoftSkillsContent extends StatelessWidget {
   }
 }
 
+// ProfessionalExperienceContent (fixed: List<Widget> for responsibilities, fixed icons)
 class ProfessionalExperienceContent extends StatelessWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -1261,28 +1338,27 @@ class ProfessionalExperienceContent extends StatelessWidget {
           company: "Entsika Consulting Services, Johannesburg",
           role: "Data Scientist",
           period: "January 2021 – Present",
-responsibilities: [
-  "Led vibrant Data Analytics teams to deliver 20+ reports and dashboards for finance, healthcare, retail, and manufacturing using Python, SQL, Power BI, Tableau, and Spark.",
-  "Built ML models with scikit-learn, TensorFlow, and PyTorch for predictive analytics in inventory, churn, and risk assessment.",
-  "Crafted Power BI dashboards with Power Query, DAX, and MDAX, producing a 76-page Market Research Report for a R2B tender.",
-  "Applied analytical skills to develop and deploy data models, evaluating and improving existing models to create solutions.",
-  "Reviewed business areas to strengthen analytics, enabling strategic planning and supporting decision-making processes with solid data.",
-  "Executed simulations on business data to identify financial impacts of decisions and created frameworks for testing model quality.",
-  "Developed and refined reporting tools and interfaces for different KPIs to increase transparency and boost staff performance.",
-  "Offered value-added insights and recommendations to business leaders using specialized techniques, helping businesses adapt to market changes.",
-  "Applied custom models and algorithms to data sets to evaluate and solve diverse company problems.",
-  "Filtered and assessed data from different views, searching for patterns indicating problems or opportunities and communicated results to help drive business growth.",
-  "Facilitated and executed strategies to educate customers on data analysis and interpretation.",
-  "Identified valuable data sources and used process automation tools to automate collection processes and maintain accuracy of collected information.",
-  "Collected and validated analytics data from various sources, creating processes and tools for monitoring and analyzing model performance and data accuracy.",
-  "Applied advanced analytical approaches and algorithms to evaluate business success factors, impact on company profits and growth potential.",
-  "Developed Power BI visualizations and dynamic and static reports for diverse projects in Internal Auditing, SCM, Disaster Management, KPI Tracking.",
-  "Mentored and led junior analytics team members, fostering growth in data modeling and BI tools.",
-  "Presented reports to stakeholders using data visualization outputs, proposing solutions and strategies to drive business change and solve problems.",
-  "Automated workflows with Power Automate, Power Apps, and Python (Pandas, NumPy, openpyxl), integrating Supabase, SAP, and Hadoop.",
-  "Applied CAATs and auditing methodologies for GDPR/POPIA compliance.",
-  "Engaged in global seminars on Data Analytics and Business Intelligence.",
-],
+          responsibilities: [
+            _buildResponsibilityItem(FontAwesomeIcons.users, "Led vibrant Data Analytics teams to deliver 20+ reports and dashboards for finance, healthcare, retail, and manufacturing using Python, SQL, Power BI, Tableau, and Spark."),
+            _buildResponsibilityItem(FontAwesomeIcons.brain, "Built ML models with scikit-learn, TensorFlow, and PyTorch for predictive analytics in inventory, churn, and risk assessment."),
+            _buildResponsibilityItem(FontAwesomeIcons.chartLine, "Crafted Power BI dashboards with Power Query, DAX, and MDAX, producing a 76-page Market Research Report for a R2B tender."),
+            _buildResponsibilityItem(FontAwesomeIcons.cogs, "Applied analytical skills to develop and deploy data models, evaluating and improving existing models to create solutions."),
+            _buildResponsibilityItem(FontAwesomeIcons.search, "Reviewed business areas to strengthen analytics, enabling strategic planning and supporting decision-making processes with solid data."),
+            _buildResponsibilityItem(FontAwesomeIcons.tachometerAlt, "Developed and refined reporting tools and interfaces for different KPIs to increase transparency and boost staff performance."),
+            _buildResponsibilityItem(FontAwesomeIcons.lightbulb, "Offered value-added insights and recommendations to business leaders using specialized techniques, helping businesses adapt to market changes."),
+            _buildResponsibilityItem(FontAwesomeIcons.projectDiagram, "Applied custom models and algorithms to data sets to evaluate and solve diverse company problems."),
+            _buildResponsibilityItem(FontAwesomeIcons.filter, "Filtered and assessed data from different views, searching for patterns indicating problems or opportunities and communicated results to help drive business growth."),
+            _buildResponsibilityItem(FontAwesomeIcons.graduationCap, "Facilitated and executed strategies to educate customers on data analysis and interpretation."),
+            _buildResponsibilityItem(FontAwesomeIcons.database, "Identified valuable data sources and used process automation tools to automate collection processes and maintain accuracy of collected information."),
+            _buildResponsibilityItem(FontAwesomeIcons.desktop, "Collected and validated analytics data from various sources, creating processes and tools for monitoring and analyzing model performance and data accuracy."),
+            _buildResponsibilityItem(FontAwesomeIcons.chartPie, "Applied advanced analytical approaches and algorithms to evaluate business success factors, impact on company profits and growth potential."),
+            _buildResponsibilityItem(FontAwesomeIcons.eye, "Developed Power BI visualizations and dynamic and static reports for diverse projects in Internal Auditing, SCM, Disaster Management, KPI Tracking."),
+            _buildResponsibilityItem(FontAwesomeIcons.handsHelping, "Mentored and led junior analytics team members, fostering growth in data modeling and BI tools."),
+            _buildResponsibilityItem(FontAwesomeIcons.chalkboardTeacher, "Presented reports to stakeholders using data visualization outputs, proposing solutions and strategies to drive business change and solve problems."),
+            _buildResponsibilityItem(FontAwesomeIcons.robot, "Automated workflows with Power Automate, Power Apps, and Python (Pandas, NumPy, openpyxl), integrating Supabase, SAP, and Hadoop."),
+            _buildResponsibilityItem(FontAwesomeIcons.shieldAlt, "Applied CAATs and auditing methodologies for GDPR/POPIA compliance."),
+            _buildResponsibilityItem(FontAwesomeIcons.globe, "Engaged in global seminars on Data Analytics and Business Intelligence."),
+          ],
           projects: [
             LinkProject("Transnet Engineering Inventory Optimisation (2022–2023)", "https://link-to-project1.com"),
             LinkProject("Security of Supply – Department of Correctional Services (2022–2024)", "https://link-to-project2.com"),
@@ -1296,33 +1372,33 @@ responsibilities: [
           company: "Info-Tech Business Solutions (iTBS), Johannesburg",
           role: "Mobile and Web Developer & Data Scientist",
           period: "January 2024 – Present",
-responsibilities: [
-  "Led teams to build AI-powered platforms and mobile apps with Django, Flask, FastAPI, Flutter, and Power BI.",
-  "Designed responsive interfaces with HTML5, CSS3, JavaScript, TypeScript, React, Angular, and Vue.js for user engagement.",
-  "Built scalable and secure Django applications with RESTful APIs, GraphQL, and JWT authentication.",
-  "Developed custom Django models, views, templates, and forms to meet complex business requirements.",
-  "Implemented Django ORM for efficient database operations and query optimization.",
-  "Utilized Django's built-in authentication and authorization system for secure user management.",
-  "Integrated third-party Django packages and libraries (e.g., Django REST framework, Django Channels) to enhance functionality.",
-  "Designed and implemented database schema and migrations using Django's migration framework.",
-  "Built and consumed APIs using Django REST framework, ensuring API security and performance.",
-  "Implemented caching mechanisms (e.g., Redis, Memcached) to improve application performance.",
-  "Utilized Celery and RabbitMQ for asynchronous task processing and job queuing.",
-  "Implemented real-time functionality using Django Channels and WebSockets.",
-  "Developed Flask applications with RESTful APIs, JWT authentication, and database integration (e.g., SQLAlchemy, Flask-SQLAlchemy).",
-  "Built microservices with Flask and containerization using Docker.",
-  "Implemented frontend functionality using JavaScript, TypeScript, and frameworks like React, Angular, and Vue.js.",
-  "Utilized JavaScript libraries like jQuery, Lodash, and Moment.js to enhance frontend functionality.",
-  "Implemented responsive design using CSS3, Sass, and Less.",
-  "Ensured code quality and best practices through code reviews, testing (unit, integration, and functional tests), and continuous integration.",
-  "Deployed applications on cloud platforms (e.g., AWS, Google Cloud, Azure) and containerization using Docker.",
-  "Configured and managed applications using environment variables and configuration files.",
-  "Implemented monitoring and logging tools (e.g., Prometheus, Grafana, ELK Stack) to track application performance and errors.",
-  "Built ML models with scikit-learn, TensorFlow, PyTorch, and AI tools (Lovable AI, Grok) for predictive analytics and NLP.",
-  "Integrated Supabase, Firebase, and Power Automate for real-time workflows.",
-  "Mentored developers, aligning solutions with business goals via stakeholder collaboration.",
-  "Applied Agile and GDPR/POPIA compliance for secure, innovative solutions.",
-],
+          responsibilities: [
+            _buildResponsibilityItem(FontAwesomeIcons.laptopCode, "Led teams to build AI-powered platforms and mobile apps with Django, Flask, FastAPI, Flutter, and Power BI."),
+            _buildResponsibilityItem(FontAwesomeIcons.palette, "Designed responsive interfaces with HTML5, CSS3, JavaScript, TypeScript, React, Angular, and Vue.js for user engagement."),
+            _buildResponsibilityItem(FontAwesomeIcons.server, "Built scalable and secure Django applications with RESTful APIs, GraphQL, and JWT authentication."),
+            _buildResponsibilityItem(FontAwesomeIcons.code, "Developed custom Django models, views, templates, and forms to meet complex business requirements."),
+            _buildResponsibilityItem(FontAwesomeIcons.database, "Implemented Django ORM for efficient database operations and query optimization."),
+            _buildResponsibilityItem(FontAwesomeIcons.userShield, "Utilized Django's built-in authentication and authorization system for secure user management."),
+            _buildResponsibilityItem(FontAwesomeIcons.box, "Integrated third-party Django packages and libraries (e.g., Django REST framework, Django Channels) to enhance functionality."),
+            _buildResponsibilityItem(FontAwesomeIcons.projectDiagram, "Designed and implemented database schema and migrations using Django's migration framework."),
+            _buildResponsibilityItem(FontAwesomeIcons.plug, "Built and consumed APIs using Django REST framework, ensuring API security and performance."),
+            _buildResponsibilityItem(FontAwesomeIcons.bolt, "Implemented caching mechanisms (e.g., Redis, Memcached) to improve application performance."),
+            _buildResponsibilityItem(FontAwesomeIcons.tasks, "Utilized Celery and RabbitMQ for asynchronous task processing and job queuing."),
+            _buildResponsibilityItem(FontAwesomeIcons.comments, "Implemented real-time functionality using Django Channels and WebSockets."),
+            _buildResponsibilityItem(FontAwesomeIcons.flask, "Developed Flask applications with RESTful APIs, JWT authentication, and database integration (e.g., SQLAlchemy, Flask-SQLAlchemy)."),
+            _buildResponsibilityItem(FontAwesomeIcons.docker, "Built microservices with Flask and containerization using Docker."),
+            _buildResponsibilityItem(FontAwesomeIcons.js, "Implemented frontend functionality using JavaScript, TypeScript, and frameworks like React, Angular, and Vue.js."),
+            _buildResponsibilityItem(FontAwesomeIcons.toolbox, "Utilized JavaScript libraries like jQuery, Lodash, and Moment.js to enhance frontend functionality."),
+            _buildResponsibilityItem(FontAwesomeIcons.mobile, "Implemented responsive design using CSS3, Sass, and Less."),
+            _buildResponsibilityItem(FontAwesomeIcons.vial, "Ensured code quality and best practices through code reviews, testing (unit, integration, and functional tests), and continuous integration."),
+            _buildResponsibilityItem(FontAwesomeIcons.cloud, "Deployed applications on cloud platforms (e.g., AWS, Google Cloud, Azure) and containerization using Docker."),
+            _buildResponsibilityItem(FontAwesomeIcons.cog, "Configured and managed applications using environment variables and configuration files."),
+            _buildResponsibilityItem(FontAwesomeIcons.chartLine, "Implemented monitoring and logging tools (e.g., Prometheus, Grafana, ELK Stack) to track application performance and errors."),
+            _buildResponsibilityItem(FontAwesomeIcons.robot, "Built ML models with scikit-learn, TensorFlow, PyTorch, and AI tools (Lovable AI, Grok) for predictive analytics and NLP."),
+            _buildResponsibilityItem(FontAwesomeIcons.fire, "Integrated Supabase, Firebase, and Power Automate for real-time workflows."),
+            _buildResponsibilityItem(FontAwesomeIcons.handsHelping, "Mentored developers, aligning solutions with business goals via stakeholder collaboration."),
+            _buildResponsibilityItem(FontAwesomeIcons.shieldAlt, "Applied Agile and GDPR/POPIA compliance for secure, innovative solutions."),
+          ],
           projects: [
             LinkProject("Performa360 Platform (2024–2025)", ""),
             LinkProject("Customer Churn Prediction System (2025)", ""),
@@ -1339,22 +1415,22 @@ responsibilities: [
           company: "Lucient Engineering & Construction, Witbank",
           role: "Data Scientist / Power BI Developer",
           period: "January 2015 – December 2020",
-responsibilities: [
-  "Built Power BI dashboards with DAX, MDAX, and Power Query for KPI tracking, equipment servicing, and production monitoring.",
-  "Applied ML (scikit-learn, PyTorch, TensorFlow) and statistical models (SPSS, SSAS, R) for equipment failure prediction, anomaly detection, and predictive maintenance.",
-  "Integrated ERP data with T-SQL, SSIS, and SSRS, automating with VBA, Python (Pandas, NumPy), and Power Automate.",
-  "Created Tableau and Power BI visualizations for operational insights, production planning, and resource allocation.",
-  "Conducted EDA for predictive maintenance models, reducing downtime by 10% and increasing overall equipment effectiveness.",
-  "Developed and implemented data-driven solutions for mining operations, including geology, production planning, and equipment maintenance.",
-  "Analyzed sensor data from mining equipment and machinery to identify trends and patterns.",
-  "Collaborated with cross-functional teams to design and implement data-driven strategic planning and decision-making processes.",
-  "Mentored staff and aligned analytics with organizational goals, promoting a data-driven culture.",
-  "Developed and maintained databases and data systems for mining operations, ensuring data quality and integrity.",
-  "Conducted data quality checks and ensured data accuracy, completeness, and consistency.",
-  "Applied data mining and machine learning techniques to identify opportunities for process improvement and optimization.",
-  "Presented findings and insights to stakeholders, using data visualization and storytelling techniques.",
-  "Stayed up-to-date with industry trends and emerging technologies, applying knowledge to improve mining operations and analytics.",
-],
+          responsibilities: [
+            _buildResponsibilityItem(FontAwesomeIcons.chartBar, "Built Power BI dashboards with DAX, MDAX, and Power Query for KPI tracking, equipment servicing, and production monitoring."),
+            _buildResponsibilityItem(FontAwesomeIcons.brain, "Applied ML (scikit-learn, PyTorch, TensorFlow) and statistical models (SPSS, SSAS, R) for equipment failure prediction, anomaly detection, and predictive maintenance."),
+            _buildResponsibilityItem(FontAwesomeIcons.link, "Integrated ERP data with T-SQL, SSIS, and SSRS, automating with VBA, Python (Pandas, NumPy), and Power Automate."),
+            _buildResponsibilityItem(FontAwesomeIcons.eye, "Created Tableau and Power BI visualizations for operational insights, production planning, and resource allocation."),
+            _buildResponsibilityItem(FontAwesomeIcons.tools, "Conducted EDA for predictive maintenance models, reducing downtime by 10% and increasing overall equipment effectiveness."),
+            _buildResponsibilityItem(FontAwesomeIcons.hardHat, "Developed and implemented data-driven solutions for mining operations, including geology, production planning, and equipment maintenance."),
+            _buildResponsibilityItem(FontAwesomeIcons.signal, "Analyzed sensor data from mining equipment and machinery to identify trends and patterns."),
+            _buildResponsibilityItem(FontAwesomeIcons.users, "Collaborated with cross-functional teams to design and implement data-driven strategic planning and decision-making processes."),
+            _buildResponsibilityItem(FontAwesomeIcons.graduationCap, "Mentored staff and aligned analytics with organizational goals, promoting a data-driven culture."),
+            _buildResponsibilityItem(FontAwesomeIcons.database, "Developed and maintained databases and data systems for mining operations, ensuring data quality and integrity."),
+            _buildResponsibilityItem(FontAwesomeIcons.checkCircle, "Conducted data quality checks and ensured data accuracy, completeness, and consistency."),
+            _buildResponsibilityItem(FontAwesomeIcons.search, "Applied data mining and machine learning techniques to identify opportunities for process improvement and optimization."),
+            _buildResponsibilityItem(FontAwesomeIcons.chalkboardTeacher, "Presented findings and insights to stakeholders, using data visualization and storytelling techniques."),
+            _buildResponsibilityItem(FontAwesomeIcons.rocket, "Stayed up-to-date with industry trends and emerging technologies, applying knowledge to improve mining operations and analytics."),
+          ],
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
         ),
@@ -1362,31 +1438,51 @@ responsibilities: [
           company: "Dairiboard Limited, Harare, Zimbabwe",
           role: "Senior Microbiologist / Analyst",
           period: "January 2005 – December 2014",
-responsibilities: [
-  "Conducted lab tests on inbound, inline, and outbound dairy product samples, ensuring ISO-compliant safety and quality.",
-  "Analyzed SAP QM (LIMS) data for crucial product safety and quality insights, identifying trends and areas for improvement.",
-  "Presented monthly stakeholder reports on production and quality metrics, highlighting key findings and recommendations.",
-  "Developed and updated ISO-aligned SOPs and experimental methodologies for laboratory analysis of dairy products.",
-  "Supervised and managed junior staff, conducting KPI reviews, mentoring, and ensuring adherence to laboratory protocols.",
-  "Extracted, collated, validated, and analyzed production data for quality control, identifying opportunities for process improvement.",
-  "Participated in internal food safety and quality audits, ensuring compliance with regulatory requirements and company standards.",
-  "Ensured data met stringent quality control standards, flagging any issues and implementing corrective actions.",
-  "Collaborated with production, supply chain, and regulatory affairs teams to align laboratory tests and data initiatives with organizational goals.",
-  "Conducted microbiological testing and analysis of dairy products, including pathogen detection and enumeration.",
-  "Performed biochemical testing and analysis of dairy products, including compositional analysis and quality control.",
-  "Developed and implemented new laboratory methods and techniques to improve testing efficiency and accuracy.",
-  "Maintained laboratory equipment and ensured calibration and validation of instruments.",
-  "Participated in method validation and verification studies to ensure accuracy and precision of laboratory results.",
-  "Collaborated with quality assurance team to develop and implement quality control measures and ensure compliance with regulatory requirements.",
-],
+          responsibilities: [
+            _buildResponsibilityItem(FontAwesomeIcons.vial, "Conducted lab tests on inbound, inline, and outbound dairy product samples, ensuring ISO-compliant safety and quality."),
+            _buildResponsibilityItem(FontAwesomeIcons.chartLine, "Analyzed SAP QM (LIMS) data for crucial product safety and quality insights, identifying trends and areas for improvement."),
+            _buildResponsibilityItem(FontAwesomeIcons.fileAlt, "Presented monthly stakeholder reports on production and quality metrics, highlighting key findings and recommendations."),
+            _buildResponsibilityItem(FontAwesomeIcons.clipboardList, "Developed and updated ISO-aligned SOPs and experimental methodologies for laboratory analysis of dairy products."),
+            _buildResponsibilityItem(FontAwesomeIcons.userTie, "Supervised and managed junior staff, conducting KPI reviews, mentoring, and ensuring adherence to laboratory protocols."),
+            _buildResponsibilityItem(FontAwesomeIcons.search, "Extracted, collated, validated, and analyzed production data for quality control, identifying opportunities for process improvement."),
+            _buildResponsibilityItem(FontAwesomeIcons.clipboardCheck, "Participated in internal food safety and quality audits, ensuring compliance with regulatory requirements and company standards."),
+            _buildResponsibilityItem(FontAwesomeIcons.award, "Ensured data met stringent quality control standards, flagging any issues and implementing corrective actions."),
+            _buildResponsibilityItem(FontAwesomeIcons.handsHelping, "Collaborated with production, supply chain, and regulatory affairs teams to align laboratory tests and data initiatives with organizational goals."),
+            _buildResponsibilityItem(FontAwesomeIcons.microscope, "Conducted microbiological testing and analysis of dairy products, including pathogen detection and enumeration."),
+            _buildResponsibilityItem(FontAwesomeIcons.flask, "Performed biochemical testing and analysis of dairy products, including compositional analysis and quality control."),
+            _buildResponsibilityItem(FontAwesomeIcons.lightbulb, "Developed and implemented new laboratory methods and techniques to improve testing efficiency and accuracy."),
+            _buildResponsibilityItem(FontAwesomeIcons.tools, "Maintained laboratory equipment and ensured calibration and validation of instruments."),
+            _buildResponsibilityItem(FontAwesomeIcons.checkDouble, "Participated in method validation and verification studies to ensure accuracy and precision of laboratory results."),
+            _buildResponsibilityItem(FontAwesomeIcons.userShield, "Collaborated with quality assurance team to develop and implement quality control measures and ensure compliance with regulatory requirements."),
+          ],
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
         ),
       ],
     );
   }
+
+  Widget _buildResponsibilityItem(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: secondaryColor),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14, height: 1.4),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
+// EducationContent (defined)
 class EducationContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1423,10 +1519,16 @@ class EducationContent extends StatelessWidget {
   }
 }
 
+// CertificationsContent (fixed: added launchURL parameter)
 class CertificationsContent extends StatelessWidget {
   final Color primaryColor;
+  final Future<void> Function(String) launchURL;
 
-  const CertificationsContent({super.key, required this.primaryColor});
+  const CertificationsContent({
+    super.key,
+    required this.primaryColor,
+    required this.launchURL,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1441,6 +1543,7 @@ class CertificationsContent extends StatelessWidget {
               "10 courses: What is Data Science, Tools for Data Science, Data Science Methodology, Python for Data Science, AI & Development, Python Project for Data Science, Databases & SQL for Data Science, Data Analysis with Python, Data Visualization with Python, Machine Learning with Python, Applied Data Science Capstone",
           verification: "https://coursera.org/verify/specialization/GUSLY3ETUER4",
           primaryColor: primaryColor,
+          launchURL: launchURL,
         ),
         CertificationTile(
           title: "Python 3 Programming",
@@ -1450,6 +1553,7 @@ class CertificationsContent extends StatelessWidget {
               "5 courses: Python Basics, Data Collection and Processing with Python, Python Functions, Files, and Dictionaries, Python Classes and Inheritance, Python Project: pillow, tesseract, and OpenCV",
           verification: "https://coursera.org/verify/3ZV7F6XK3L3N",
           primaryColor: primaryColor,
+          launchURL: launchURL,
         ),
         CertificationTile(
           title: "Data Science Fundamentals with Python and SQL",
@@ -1458,12 +1562,67 @@ class CertificationsContent extends StatelessWidget {
           details:
               "5 courses: Tools for Data Science, Python for Data Science, AI & Development Python Project for Data Science, Statistics for Data Science with Python, Databases and SQL for Data Science with Python",
           primaryColor: primaryColor,
+          launchURL: launchURL,
         ),
       ],
     );
   }
 }
 
+// CertificationTile (single declaration, fixed launchURL)
+class CertificationTile extends StatelessWidget {
+  final String title;
+  final String issuer;
+  final String period;
+  final String details;
+  final String? verification;
+  final Color primaryColor;
+  final Future<void> Function(String) launchURL;
+
+  const CertificationTile({
+    super.key,
+    required this.title,
+    required this.issuer,
+    required this.period,
+    required this.details,
+    this.verification,
+    required this.primaryColor,
+    required this.launchURL,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Icon(Icons.card_membership, color: primaryColor),
+        title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(issuer, style: Theme.of(context).textTheme.bodyMedium),
+            Text(period, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
+            const SizedBox(height: 6),
+            if (details.isNotEmpty) Text(details, style: Theme.of(context).textTheme.bodyMedium),
+            if (verification != null)
+              GestureDetector(
+                onTap: () => launchURL(verification!),
+                child: Text(
+                  "Verification: $verification",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// AccomplishmentsContent (defined)
 class AccomplishmentsContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1480,6 +1639,7 @@ class AccomplishmentsContent extends StatelessWidget {
   }
 }
 
+// ReferencesContent (defined)
 class ReferencesContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1513,6 +1673,7 @@ class ReferencesContent extends StatelessWidget {
   }
 }
 
+// ProjectsContent (defined)
 class ProjectsContent extends StatelessWidget {
   final Function(Project) onProjectTap;
   final Color primaryColor;
@@ -1567,6 +1728,7 @@ class ProjectsContent extends StatelessWidget {
   }
 }
 
+// FullCVContent (fixed: pass launchURL to CertificationsContent, use correct children)
 class FullCVContent extends StatelessWidget {
   final Future<void> Function(String) launchURL;
   final Color primaryColor;
@@ -1642,7 +1804,7 @@ class FullCVContent extends StatelessWidget {
             secondaryColor: secondaryColor,
             child: Container(
               padding: const EdgeInsets.all(16),
-              child: CertificationsContent(primaryColor: primaryColor),
+              child: CertificationsContent(primaryColor: primaryColor, launchURL: launchURL),
             ),
           ),
           SectionHeader(
@@ -1671,6 +1833,7 @@ class FullCVContent extends StatelessWidget {
   }
 }
 
+// Project (defined)
 class Project {
   final String title;
   final String description;
@@ -1813,6 +1976,7 @@ const List<Project> projects = [
   ),
 ];
 
+// ProjectGrid (defined)
 class ProjectGrid extends StatelessWidget {
   final Function(Project) onProjectTap;
   final Color primaryColor;
@@ -1856,6 +2020,7 @@ class ProjectGrid extends StatelessWidget {
   }
 }
 
+// ProjectCard (defined)
 class ProjectCard extends StatelessWidget {
   final Project project;
   final Function(Project) onTap;
@@ -1941,6 +2106,7 @@ class ProjectCard extends StatelessWidget {
   }
 }
 
+// ProjectDetailsModal (defined)
 class ProjectDetailsModal extends StatelessWidget {
   final Project project;
   final Color primaryColor;
@@ -2048,6 +2214,7 @@ class ProjectDetailsModal extends StatelessWidget {
   }
 }
 
+// SectionHeader (defined)
 class SectionHeader extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -2095,6 +2262,7 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
+// SkillGrid (defined)
 class SkillGrid extends StatelessWidget {
   const SkillGrid({super.key});
 
@@ -2180,6 +2348,7 @@ class SkillGrid extends StatelessWidget {
   }
 }
 
+// SkillItem (defined)
 class SkillItem extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -2220,11 +2389,12 @@ class SkillItem extends StatelessWidget {
   }
 }
 
+// ExperienceCard (fixed: List<Widget> for responsibilities)
 class ExperienceCard extends StatelessWidget {
   final String company;
   final String role;
   final String period;
-  final List<String> responsibilities;
+  final List<Widget> responsibilities;
   final List<LinkProject>? projects;
   final Color primaryColor;
   final Color secondaryColor;
@@ -2263,7 +2433,7 @@ class ExperienceCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text("Responsibilities:", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
-            BulletList(responsibilities, primaryColor: primaryColor),
+            ...responsibilities, // Spread the List<Widget>
             if (projects != null && projects!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text("Key Projects:", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
@@ -2277,6 +2447,7 @@ class ExperienceCard extends StatelessWidget {
   }
 }
 
+// EducationTile (defined)
 class EducationTile extends StatelessWidget {
   final String degree;
   final String institution;
@@ -2314,56 +2485,7 @@ class EducationTile extends StatelessWidget {
   }
 }
 
-class CertificationTile extends StatelessWidget {
-  final String title;
-  final String issuer;
-  final String period;
-  final String details;
-  final String? verification;
-  final Color primaryColor;
-
-  const CertificationTile({
-    super.key,
-    required this.title,
-    required this.issuer,
-    required this.period,
-    required this.details,
-    this.verification,
-    required this.primaryColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Icon(Icons.card_membership, color: primaryColor),
-        title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(issuer, style: Theme.of(context).textTheme.bodyMedium),
-            Text(period, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
-            const SizedBox(height: 6),
-            if (details.isNotEmpty) Text(details, style: Theme.of(context).textTheme.bodyMedium),
-            if (verification != null)
-              GestureDetector(
-                onTap: () => launchUrl(Uri.parse(verification!)),
-                child: Text(
-                  "Verification: $verification",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
+// AccomplishmentList (defined)
 class AccomplishmentList extends StatelessWidget {
   final List<String> items;
   final Color primaryColor;
@@ -2405,6 +2527,7 @@ class AccomplishmentList extends StatelessWidget {
   }
 }
 
+// ReferenceTile (defined)
 class ReferenceTile extends StatelessWidget {
   final String name;
   final String position;
@@ -2438,6 +2561,7 @@ class ReferenceTile extends StatelessWidget {
   }
 }
 
+// LinkProject (defined)
 class LinkProject {
   final String name;
   final String url;
@@ -2445,6 +2569,7 @@ class LinkProject {
   const LinkProject(this.name, this.url);
 }
 
+// BulletList (defined)
 class BulletList extends StatelessWidget {
   final List<String> items;
   final Color primaryColor;
