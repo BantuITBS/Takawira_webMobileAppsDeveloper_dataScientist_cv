@@ -3,58 +3,118 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-void main() => runApp(const CVApp());
+void main() {
+  runApp(const MyApp());
+}
 
-class CVApp extends StatelessWidget {
-  const CVApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme.apply(
-      fontFamily: 'PlayfairDisplay',
-    );
-
     return MaterialApp(
+      title: 'Takawira Mazando CV',
+      debugShowCheckedModeBanner: false, // debug ribbon disabled
       theme: ThemeData(
-        fontFamily: 'PlayfairDisplay',
-        textTheme: textTheme.copyWith(
-          headlineSmall: textTheme.headlineSmall?.copyWith(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-          headlineMedium: textTheme.headlineMedium?.copyWith(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
-          bodyLarge: textTheme.bodyLarge?.copyWith(
-            fontSize: 16,
-          ),
-          bodyMedium: textTheme.bodyMedium?.copyWith(
-            fontSize: 14,
-          ),
-          labelLarge: textTheme.labelLarge?.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        // Note: CardTheme is correct for Flutter 3.24+; if issues persist, check your Flutter version.
-        cardTheme: CardThemeData(
-          elevation: 3,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-          color: Colors.white,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.white,
-        ),
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const CVHomePage(),
-      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class EducationTile extends StatelessWidget {
+  final String degree;
+  final String institution;
+  final String period;
+  final String details;
+  final Color primaryColor;
+  final String? launchURL;
+  final String? schoolURL;
+  final String? systemURL;
+
+  const EducationTile({
+    super.key,
+    required this.degree,
+    required this.institution,
+    required this.period,
+    required this.details,
+    required this.primaryColor,
+    this.launchURL,
+    this.schoolURL,
+    this.systemURL,
+  });
+
+  Future<void> _launchLink(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: primaryColor.withOpacity(0.05),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              degree,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (launchURL != null)
+                  _linkText(institution, launchURL!)
+                else if (schoolURL != null)
+                  _linkText(institution, schoolURL!)
+                else
+                  Text(institution, style: const TextStyle(fontSize: 16)),
+                if (systemURL != null) ...[
+                  const SizedBox(width: 6),
+                  _linkText("(Cambridge International Exams)", systemURL!)
+                ],
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              period,
+              style: const TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(details),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _linkText(String text, String url) {
+    return GestureDetector(
+      onTap: () => _launchLink(url),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
+        ),
+      ),
     );
   }
 }
@@ -66,6 +126,7 @@ class CVHomePage extends StatefulWidget {
   _CVHomePageState createState() => _CVHomePageState();
 }
 
+
 class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateMixin {
   String _currentSection = 'welcome';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -73,7 +134,6 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
   late Animation<double> _scaleAnimation;
   late Animation<double> _rotationAnimation;
 
-  // Color constants
   final Color _primaryColor = const Color(0xFF2A3F54);
   final Color _secondaryColor = const Color(0xFF1ABB9C);
   final Color _accentColor = const Color(0xFF1ABB9C);
@@ -247,10 +307,10 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
               ),
               const SizedBox(height: 8),
               Text(
-                "Mobile & Web Developer | Data Scientist | AI (LLM-RAG) Engineer",
+                "Python Developer | Data Scientist | AI (LLM-RAG) Engineer",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withOpacity(0.7),
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -298,7 +358,7 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
                         ),
                   ),
                   Text(
-                    'Mobile & Web Developer | Data Scientist',
+                    "Python Developer | Data Scientist | AI (LLM-RAG) Engineer",
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.white.withOpacity(0.9),
                         ),
@@ -579,7 +639,6 @@ class _CVHomePageState extends State<CVHomePage> with SingleTickerProviderStateM
   }
 }
 
-// Header class (as provided, no changes needed)
 class Header extends StatelessWidget {
   final Future<void> Function(String) launchURL;
   final Future<void> Function(String) makePhoneCall;
@@ -642,7 +701,7 @@ class Header extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "Mobile & Web Developer | Data Scientist | AI (LLM-RAG) Engineer",
+                "Python Developer | Data Scientist | AI (LLM-RAG) Engineer",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontStyle: FontStyle.italic,
                       color: Colors.white.withOpacity(0.9),
@@ -748,10 +807,10 @@ class Header extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Mobile & Web Developer | Data Scientist | AI (LLM-RAG) Engineer",
+                    "Python Developer | Data Scientist | AI (LLM-RAG) Engineer",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontStyle: FontStyle.italic,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withOpacity(0.8),
                         ),
                     textAlign: TextAlign.center,
                   ),
@@ -904,7 +963,7 @@ class Header extends StatelessWidget {
   }
 }
 
-// WelcomeContent (as provided, no changes)
+
 class WelcomeContent extends StatelessWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -921,52 +980,58 @@ class WelcomeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 36),
+            // Main Title with Gradient
             ShaderMask(
               shaderCallback: (bounds) => LinearGradient(
                 colors: [primaryColor, secondaryColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ).createShader(bounds),
               child: Text(
                 "Welcome to My Curriculum Vitae",
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white,
-                      letterSpacing: 0.5,
+                      letterSpacing: 0.8,
+                      fontSize: 32,
                     ),
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  )
+            const SizedBox(height: 40),
+            // Feature Cards - Spaced across width
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildFeatureCard(
+                    context,
+                    "Professional Experience",
+                    "15+ years in Science and Data Science / Analytics and Software Development space",
+                    const Color(0xFFE3F2FD), // Light blue
+                  ),
+                  _buildFeatureCard(
+                    context,
+                    "Technical Expertise",
+                    "Full-stack development & AI (LLM-RAG) Technologies",
+                    const Color(0xFFE8F5E8), // Light green
+                  ),
+                    _buildFeatureCard(
+                      context,
+                      "Projects Portfolio",
+                      "Proven track record of Innovative solutions on GitHub",
+                      const Color(0xFFF3E5F5), // Light purple
+                    ),
                 ],
               ),
-              child: Text(
-                "Explore my professional journey, skills, and experiences by selecting a section from the sidebar navigation.",
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[700],
-                      height: 1.6,
-                      fontSize: 16,
-                    ),
-                textAlign: TextAlign.center,
-              ),
             ),
-            const SizedBox(height: 36),
+            const SizedBox(height: 40),
+            // CTA Button with Icon
             MouseRegion(
               cursor: SystemMouseCursors.click,
               child: TweenAnimationBuilder(
@@ -978,18 +1043,25 @@ class WelcomeContent extends StatelessWidget {
                     child: child,
                   );
                 },
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   onPressed: onGetStarted,
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: secondaryColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    elevation: 8,
                     shadowColor: secondaryColor.withOpacity(0.4),
+                    side: BorderSide.none,
                   ),
-                  child: const Text(
-                    "Navigate to Projects Portfolio",
+                  icon: const Icon(
+                    Icons.arrow_forward,
+                    size: 20,
+                  ),
+                  label: const Text(
+                    "View Projects Portfolio",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -1000,18 +1072,33 @@ class WelcomeContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                3,
-                (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: Icon(
-                    Icons.circle,
-                    size: 8,
-                    color: secondaryColor.withOpacity(0.6),
-                  ),
+            // Navigation Hint
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Colors.grey.shade200,
                 ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.menu_open,
+                    color: primaryColor,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Use sidebar navigation to explore specific sections",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -1019,9 +1106,55 @@ class WelcomeContent extends StatelessWidget {
       ),
     );
   }
-}
 
-// ProfessionalSummaryContent (as provided, no changes)
+  Widget _buildFeatureCard(
+    BuildContext context,
+    String title,
+    String subtitle,
+    Color backgroundColor,
+  ) {
+    return Container(
+      width: 280,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.grey.shade100,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey.shade800,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey.shade600,
+                  height: 1.4,
+                ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
 class ProfessionalSummaryContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1058,7 +1191,6 @@ class ProfessionalSummaryContent extends StatelessWidget {
   }
 }
 
-// TechnicalSkillsContent (as provided, no changes)
 class TechnicalSkillsContent extends StatelessWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -1228,11 +1360,6 @@ class TechnicalSkillsContent extends StatelessWidget {
             "Supabase Studio (Database management)",
             "Postman (API testing)",
             "pgAdmin (PostgreSQL management)",
-            "DBeaver (Database client)",
-            "Jira (Project management)",
-            "Trello (Task tracking)",
-            "Notion (Collaboration)",
-            "MS Planner (Task planning)",
             "Chrome DevTools (Web debugging)",
             "Flutter DevTools (Mobile debugging)",
             "Uptime Robot (Monitoring)",
@@ -1306,7 +1433,6 @@ class TechnicalSkillsContent extends StatelessWidget {
   }
 }
 
-// SoftSkillsContent (as provided, no changes)
 class SoftSkillsContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1318,7 +1444,6 @@ class SoftSkillsContent extends StatelessWidget {
   }
 }
 
-// ProfessionalExperienceContent (fixed: List<Widget> for responsibilities, fixed icons)
 class ProfessionalExperienceContent extends StatelessWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -1335,9 +1460,9 @@ class ProfessionalExperienceContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExperienceCard(
-          company: "Entsika Consulting Services, Johannesburg",
+          company:"Entsika Consulting Services, Johannesburg",
           role: "Data Scientist",
-          period: "January 2021 – Present",
+          period: "January 2021 – December 2024",
           responsibilities: [
             _buildResponsibilityItem(FontAwesomeIcons.users, "Led vibrant Data Analytics teams to deliver 20+ reports and dashboards for finance, healthcare, retail, and manufacturing using Python, SQL, Power BI, Tableau, and Spark."),
             _buildResponsibilityItem(FontAwesomeIcons.brain, "Built ML models with scikit-learn, TensorFlow, and PyTorch for predictive analytics in inventory, churn, and risk assessment."),
@@ -1360,18 +1485,18 @@ class ProfessionalExperienceContent extends StatelessWidget {
             _buildResponsibilityItem(FontAwesomeIcons.globe, "Engaged in global seminars on Data Analytics and Business Intelligence."),
           ],
           projects: [
-            LinkProject("Transnet Engineering Inventory Optimisation (2022–2023)", "https://link-to-project1.com"),
-            LinkProject("Security of Supply – Department of Correctional Services (2022–2024)", "https://link-to-project2.com"),
-            LinkProject("Lease Review – Carlton Centre, Transnet Properties (2022–2024)", "https://link-to-project3.com"),
-            LinkProject("KwaZulu-Natal Floods Disaster Management (2022–2023)", "https://link-to-project4.com"),
+            LinkProject("Transnet Engineering Inventory Optimisation (2022)", "https://link-to-project1.com"),
+            LinkProject("Security of Supply – Department of Correctional Services (2024)", "https://link-to-project2.com"),
+            LinkProject("Lease Review – Carlton Centre, Transnet Properties (2023)", "https://link-to-project3.com"),
+            LinkProject("KwaZulu-Natal Floods Disaster Management (2023)", "https://link-to-project4.com"),
           ],
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
         ),
         ExperienceCard(
-          company: "Info-Tech Business Solutions (iTBS), Johannesburg",
-          role: "Mobile and Web Developer & Data Scientist",
-          period: "January 2024 – Present",
+          company: "NNT Strategic Solutions, Pretoria",
+          role: "Software Developer",
+          period: "January 2025 – Present",
           responsibilities: [
             _buildResponsibilityItem(FontAwesomeIcons.laptopCode, "Led teams to build AI-powered platforms and mobile apps with Django, Flask, FastAPI, Flutter, and Power BI."),
             _buildResponsibilityItem(FontAwesomeIcons.palette, "Designed responsive interfaces with HTML5, CSS3, JavaScript, TypeScript, React, Angular, and Vue.js for user engagement."),
@@ -1413,30 +1538,27 @@ class ProfessionalExperienceContent extends StatelessWidget {
         ),
         ExperienceCard(
           company: "Lucient Engineering & Construction, Witbank",
-          role: "Data Scientist / Power BI Developer",
+          role: "Data Scientist",
           period: "January 2015 – December 2020",
-          responsibilities: [
-            _buildResponsibilityItem(FontAwesomeIcons.chartBar, "Built Power BI dashboards with DAX, MDAX, and Power Query for KPI tracking, equipment servicing, and production monitoring."),
-            _buildResponsibilityItem(FontAwesomeIcons.brain, "Applied ML (scikit-learn, PyTorch, TensorFlow) and statistical models (SPSS, SSAS, R) for equipment failure prediction, anomaly detection, and predictive maintenance."),
-            _buildResponsibilityItem(FontAwesomeIcons.link, "Integrated ERP data with T-SQL, SSIS, and SSRS, automating with VBA, Python (Pandas, NumPy), and Power Automate."),
-            _buildResponsibilityItem(FontAwesomeIcons.eye, "Created Tableau and Power BI visualizations for operational insights, production planning, and resource allocation."),
-            _buildResponsibilityItem(FontAwesomeIcons.tools, "Conducted EDA for predictive maintenance models, reducing downtime by 10% and increasing overall equipment effectiveness."),
-            _buildResponsibilityItem(FontAwesomeIcons.hardHat, "Developed and implemented data-driven solutions for mining operations, including geology, production planning, and equipment maintenance."),
-            _buildResponsibilityItem(FontAwesomeIcons.signal, "Analyzed sensor data from mining equipment and machinery to identify trends and patterns."),
-            _buildResponsibilityItem(FontAwesomeIcons.users, "Collaborated with cross-functional teams to design and implement data-driven strategic planning and decision-making processes."),
-            _buildResponsibilityItem(FontAwesomeIcons.graduationCap, "Mentored staff and aligned analytics with organizational goals, promoting a data-driven culture."),
-            _buildResponsibilityItem(FontAwesomeIcons.database, "Developed and maintained databases and data systems for mining operations, ensuring data quality and integrity."),
-            _buildResponsibilityItem(FontAwesomeIcons.checkCircle, "Conducted data quality checks and ensured data accuracy, completeness, and consistency."),
-            _buildResponsibilityItem(FontAwesomeIcons.search, "Applied data mining and machine learning techniques to identify opportunities for process improvement and optimization."),
-            _buildResponsibilityItem(FontAwesomeIcons.chalkboardTeacher, "Presented findings and insights to stakeholders, using data visualization and storytelling techniques."),
-            _buildResponsibilityItem(FontAwesomeIcons.rocket, "Stayed up-to-date with industry trends and emerging technologies, applying knowledge to improve mining operations and analytics."),
-          ],
+            responsibilities: [
+              _buildResponsibilityItem(FontAwesomeIcons.database, "Extracted, cleaned, and consolidated operational data from ERP systems, maintenance logs, SCADA systems, and equipment sensors for dragliners and other mining machinery."),
+              _buildResponsibilityItem(FontAwesomeIcons.brain, "Developed predictive maintenance models using ML and statistical methods to forecast equipment failures and reduce unplanned downtime."),
+              _buildResponsibilityItem(FontAwesomeIcons.chartBar, "Monitored equipment KPIs including utilization, cycle times, and repair turnaround, identifying bottlenecks and operational inefficiencies."),
+              _buildResponsibilityItem(FontAwesomeIcons.tools, "Analyzed historical shutdowns and maintenance schedules to optimize resource allocation and minimize operational downtime."),
+              _buildResponsibilityItem(FontAwesomeIcons.table, "Built dashboards in Power BI and Tableau for real-time monitoring of equipment health, maintenance status, and project progress."),
+              _buildResponsibilityItem(FontAwesomeIcons.wallet, "Evaluated maintenance costs, spare parts usage, and contractor performance to identify opportunities for cost optimization."),
+              _buildResponsibilityItem(FontAwesomeIcons.users, "Collaborated with engineering, maintenance, and project teams to translate data insights into actionable recommendations for operational improvements."),
+              _buildResponsibilityItem(FontAwesomeIcons.shieldAlt, "Monitored safety and compliance metrics, supporting risk mitigation and ensuring adherence to regulatory standards."),
+              _buildResponsibilityItem(FontAwesomeIcons.search, "Performed exploratory data analysis (EDA) on sensor and operational data to identify trends, anomalies, and potential equipment issues."),
+              _buildResponsibilityItem(FontAwesomeIcons.chalkboardTeacher, "Presented analytical findings to stakeholders through reports, dashboards, and data-driven storytelling to support decision-making."),
+              _buildResponsibilityItem(FontAwesomeIcons.rocket, "Stayed current with industry trends, advanced analytics, and emerging AI/ML technologies to enhance mining operations and predictive capabilities."),
+            ],
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
         ),
         ExperienceCard(
           company: "Dairiboard Limited, Harare, Zimbabwe",
-          role: "Senior Microbiologist / Analyst",
+          role: "Senior Microbiologist / Laboratory Analyst",
           period: "January 2005 – December 2014",
           responsibilities: [
             _buildResponsibilityItem(FontAwesomeIcons.vial, "Conducted lab tests on inbound, inline, and outbound dairy product samples, ensuring ISO-compliant safety and quality."),
@@ -1454,6 +1576,7 @@ class ProfessionalExperienceContent extends StatelessWidget {
             _buildResponsibilityItem(FontAwesomeIcons.tools, "Maintained laboratory equipment and ensured calibration and validation of instruments."),
             _buildResponsibilityItem(FontAwesomeIcons.checkDouble, "Participated in method validation and verification studies to ensure accuracy and precision of laboratory results."),
             _buildResponsibilityItem(FontAwesomeIcons.userShield, "Collaborated with quality assurance team to develop and implement quality control measures and ensure compliance with regulatory requirements."),
+            _buildResponsibilityItem(FontAwesomeIcons.chartBar,"Designed and developed interactive Power BI dashboards to visualize laboratory results, enabling real-time monitoring of dairy product safety and quality trends."),
           ],
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
@@ -1482,7 +1605,6 @@ class ProfessionalExperienceContent extends StatelessWidget {
   }
 }
 
-// EducationContent (defined)
 class EducationContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1494,32 +1616,55 @@ class EducationContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         EducationTile(
-          degree: "B.Sc. (Hons) in Industrial Microbiology",
+          degree: "B.Sc. (Hons)",
           institution: "Midlands State University, Zimbabwe",
-          period: "2001 – 2004",
-          details: "Completed 36 modules, including data analysis, scientific methodologies, laboratory management, and microbiology research.",
+          period: "2000 – 2004; 2013 (Honours)",
+          details: 
+              "Completed 36 modules covering data analysis, "
+              "scientific methodologies, laboratory management, and microbiology research.\n\n"
+              "📌 Key modules with strong relevance to my current career as a Software Engineer & Data Scientist:\n"
+              "• Computers and Computer Architecture\n"
+              "• Information Systems 1 & 2\n"
+              "• BioMathematics 1 & 3\n"
+              "• Applied Statistics 1 & 2\n"
+              "• Linear Mathematics\n"
+              "• Analytical Chemistry\n"
+              "• Calculus\n"
+              "• Logic\n"
+              "• Honours Dissertation (Applied Research)",
           primaryColor: primaryColor,
+          launchURL: "https://www.msu.ac.zw",
         ),
         EducationTile(
           degree: "A-Levels (Sciences)",
           institution: "Guinea Fowl High School, Zimbabwe",
-          period: "1999 – 2000",
-          details: "Subjects: Mathematics, Chemistry, Biology",
+          period: "1997 – 1998",
+          details: 
+              "Completed A-Level exams under the Cambridge International Examination system, "
+              "demonstrating advanced proficiency in core science subjects.\n\n"
+              "Subjects included: Mathematics, Chemistry, Biology",
           primaryColor: primaryColor,
+          schoolURL: "https://www.guineafowlhigh.ac.zw",
+          systemURL: "https://www.cambridgeinternational.org",
         ),
         EducationTile(
-          degree: "GCSEs (Ordinary Level)",
+          degree: "High School Diploma (GCSEs – Ordinary Level)",
           institution: "Mutare Boys High School, Zimbabwe",
-          period: "1997 – 1998",
-          details: "Subjects: Mathematics, Biology, Physical Sciences, Geography, Metalwork, History, Technical Graphics, French, English Language, Literature in English",
+          period: "1993 – 1996",
+          details: 
+              "Completed the Cambridge Syllabi under the Cambridge International Examination system, "
+              "demonstrating proficiency across a broad range of subjects.\n\n"
+              "Subjects included: Mathematics, Biology, Physical Sciences, Geography, Metalwork, "
+              "History, Technical Graphics, French, English Language, and Literature in English.",
           primaryColor: primaryColor,
+          schoolURL: "https://www.mutareboyshighschool.ac.zw",
+          systemURL: "https://www.cambridgeinternational.org",
         ),
       ],
     );
   }
 }
 
-// CertificationsContent (fixed: added launchURL parameter)
 class CertificationsContent extends StatelessWidget {
   final Color primaryColor;
   final Future<void> Function(String) launchURL;
@@ -1539,42 +1684,73 @@ class CertificationsContent extends StatelessWidget {
           title: "IBM Data Science Professional Certificate",
           issuer: "Coursera",
           period: "2021 – 2022",
-          details:
-              "10 courses: What is Data Science, Tools for Data Science, Data Science Methodology, Python for Data Science, AI & Development, Python Project for Data Science, Databases & SQL for Data Science, Data Analysis with Python, Data Visualization with Python, Machine Learning with Python, Applied Data Science Capstone",
+          courses: [
+            CourseItem("📊 What is Data Science?", null),
+            CourseItem("🛠️ Tools for Data Science", "https://coursera.org/verify/3HN9VHTL9NAV"),
+            CourseItem("📋 Data Science Methodology", null),
+            CourseItem("🐍 Python for Data Science, AI & Development", "https://coursera.org/verify/LXAXG7URCGJJ"),
+            CourseItem("💻 Python Project for Data Science", "https://coursera.org/verify/LWRHHEGETXSL"),
+            CourseItem("🗄️ Databases and SQL for Data Science with Python", "https://coursera.org/verify/7PRS4MJPPBZK"),
+            CourseItem("📈 Data Analysis with Python", null),
+            CourseItem("📊 Data Visualization with Python", null),
+            CourseItem("🤖 Machine Learning with Python", null),
+            CourseItem("🎓 Applied Data Science Capstone", null),
+            CourseItem("✨ Generative AI: Elevate Your Data Science Career", null),
+            CourseItem("💼 Data Scientist Career Guide and Interview Preparation", null),
+          ],
+          primaryColor: primaryColor,
+          launchURL: launchURL,
           verification: "https://coursera.org/verify/specialization/GUSLY3ETUER4",
-          primaryColor: primaryColor,
-          launchURL: launchURL,
         ),
+        const SizedBox(height: 20),
         CertificationTile(
-          title: "Python 3 Programming",
-          issuer: "University of Michigan through Coursera",
+          title: "Python 3 Programming Specialization",
+          issuer: "University of Michigan, Coursera",
           period: "2021 – 2022",
-          details:
-              "5 courses: Python Basics, Data Collection and Processing with Python, Python Functions, Files, and Dictionaries, Python Classes and Inheritance, Python Project: pillow, tesseract, and OpenCV",
-          verification: "https://coursera.org/verify/3ZV7F6XK3L3N",
+          courses: [
+            CourseItem("🔤 Python Basics", "https://coursera.org/verify/8236JMR5K4RW"),
+            CourseItem("📥 Data Collection and Processing with Python", "https://coursera.org/verify/UH9C2YE7XGFQ"),
+            CourseItem("📚 Python Functions, Files, and Dictionaries", "https://coursera.org/verify/F6N75RWRYVWM"),
+            CourseItem("🏛️ Python Classes and Inheritance", "https://coursera.org/verify/YAQ2Z8TYH44Y"),
+            CourseItem("🖼️ Python Project: Software Engineering and Image Manipulation", "https://coursera.org/verify/XC9QU5PUYSSF"),
+          ],
           primaryColor: primaryColor,
           launchURL: launchURL,
+          verification: "https://www.coursera.org/account/accomplishments/specialization/certificate/EA8H8GA6YGXQ",
         ),
+        const SizedBox(height: 20),
         CertificationTile(
           title: "Data Science Fundamentals with Python and SQL",
           issuer: "IBM, Coursera",
           period: "2021 – 2022",
-          details:
-              "5 courses: Tools for Data Science, Python for Data Science, AI & Development Python Project for Data Science, Statistics for Data Science with Python, Databases and SQL for Data Science with Python",
+          courses: [
+            CourseItem("🛠️ Tools for Data Science", "https://coursera.org/verify/3HN9VHTL9NAV"),
+            CourseItem("🐍 Python for Data Science, AI & Development", "https://coursera.org/verify/LXAXG7URCGJJ"),
+            CourseItem("💻 Python Project for Data Science", "https://coursera.org/verify/LWRHHEGETXSL"),
+            CourseItem("📊 Statistics for Data Science with Python", "https://coursera.org/verify/W3A8849BKRNE"),
+            CourseItem("🗄️ Databases and SQL for Data Science with Python", "https://coursera.org/verify/7PRS4MJPPBZK"),
+          ],
           primaryColor: primaryColor,
           launchURL: launchURL,
+          verification: "https://coursera.org/verify/specialization/GUSLY3ETUER4",
         ),
       ],
     );
   }
 }
 
-// CertificationTile (single declaration, fixed launchURL)
+class CourseItem {
+  final String title;
+  final String? verificationUrl;
+
+  const CourseItem(this.title, this.verificationUrl);
+}
+
 class CertificationTile extends StatelessWidget {
   final String title;
   final String issuer;
   final String period;
-  final String details;
+  final List<CourseItem> courses;
   final String? verification;
   final Color primaryColor;
   final Future<void> Function(String) launchURL;
@@ -1584,7 +1760,7 @@ class CertificationTile extends StatelessWidget {
     required this.title,
     required this.issuer,
     required this.period,
-    required this.details,
+    required this.courses,
     this.verification,
     required this.primaryColor,
     required this.launchURL,
@@ -1593,28 +1769,166 @@ class CertificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Icon(Icons.card_membership, color: primaryColor),
-        title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-        subtitle: Column(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Colors.grey.shade50],
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(issuer, style: Theme.of(context).textTheme.bodyMedium),
-            Text(period, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
-            const SizedBox(height: 6),
-            if (details.isNotEmpty) Text(details, style: Theme.of(context).textTheme.bodyMedium),
-            if (verification != null)
-              GestureDetector(
-                onTap: () => launchURL(verification!),
-                child: Text(
-                  "Verification: $verification",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: primaryColor.withOpacity(0.3)),
+                  ),
+                  child: Icon(Icons.verified, color: primaryColor, size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: primaryColor,
+                            ),
                       ),
+                      const SizedBox(height: 4),
+                      Text(
+                        issuer,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Colors.grey.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        period,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Divider(height: 1, color: Colors.grey.shade300),
+            const SizedBox(height: 16),
+            Text(
+              "Courses (${courses.length}):",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            ...courses.map((course) => Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 24,
+                    child: Text(
+                      course.title.substring(0, 2),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: course.verificationUrl != null
+                        ? GestureDetector(
+                            onTap: () => launchURL(course.verificationUrl!),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    course.title.substring(2),
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.blue.shade700,
+                                          decoration: TextDecoration.underline,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  ),
+                                ),
+                                Icon(Icons.launch, size: 16, color: Colors.blue.shade700),
+                              ],
+                            ),
+                          )
+                        : Text(
+                            course.title.substring(2),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Colors.grey.shade800,
+                                ),
+                          ),
+                  ),
+                ],
+              ),
+            )),
+            const SizedBox(height: 16),
+            if (verification != null) ...[
+              Divider(height: 1, color: Colors.grey.shade300),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: primaryColor.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: primaryColor.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.verified_user, color: primaryColor, size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Full Certification Verification",
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryColor,
+                                ),
+                          ),
+                          GestureDetector(
+                            onTap: () => launchURL(verification!),
+                            child: Text(
+                              verification!,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.blue.shade700,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward, color: primaryColor, size: 20),
+                  ],
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -1622,7 +1936,26 @@ class CertificationTile extends StatelessWidget {
   }
 }
 
-// AccomplishmentsContent (defined)
+// AccomplishmentsContent Widget
+//
+// AccomplishmentsContent:
+// A stateless widget that displays a list of professional accomplishments in a structured and visually consistent format.
+// It uses the AccomplishmentList widget to render each accomplishment as an item in the list.
+//
+// Properties:
+// - primaryColor: Defines the primary color used in the AccomplishmentList, ensuring consistent theming across the UI.
+//
+// Functionality:
+// - The widget builds an AccomplishmentList containing a series of detailed professional achievements, 
+//   including machine learning solutions, Power BI dashboards, ISO standard implementation, predictive maintenance, 
+//   and other impactful contributions in sectors like freight & rail, coal mining, and dairy processing.
+// - Each accomplishment is presented as a text item, allowing users or stakeholders to quickly review key career highlights.
+//
+// Purpose:
+// - Provides a clean and structured way to showcase professional accomplishments in a portfolio or CV app.
+// - Ensures consistent styling and easy maintenance, with the ability to pass different primary colors for customization.
+// - Highlights both technical expertise and measurable impact in a results-driven format.
+
 class AccomplishmentsContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1630,16 +1963,73 @@ class AccomplishmentsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AccomplishmentList([
-      "Optimized a R2.4B inventory for Transnet, setting a national standard.",
-      "Uncovered anomalies in Carlton Centre lease data, driving divestment.",
-      "Contributed to KwaZulu-Natal Floods Task Team, shaping National Disaster Response Strategy.",
-      "Developed 50+ Power BI dashboards for auditing, supply chain, and KPI tracking.",
-    ], primaryColor: primaryColor);
+return AccomplishmentList([
+  "Developed and implemented a machine learning solution for a client in the freight and rail sector, optimizing a R2.4B inventory by reallocating underutilized materials to high-consumption areas. Integrated with SAP forecasting tables to predict future usage, helping avoid approximately R500 million in procurement costs.",
+  "Uncovered anomalies in Carlton Centre lease data, generating insights that led to significant cost savings through divestment from a loss-making asset.",
+  "Contributed to KwaZulu-Natal Floods Task Team, shaping National Disaster Response Strategy.",
+  "Developed 50+ Power BI dashboards for auditing, supply chain, and KPI tracking.",
+  "Supported implementation of ISO 22000 and ISO 9001 standards in dairy processing, ensuring food safety and quality compliance.",
+  "Contributed to laboratory accreditation efforts under ISO/IEC 17025 and ISO 14001, strengthening credibility and sustainability initiatives.",
+  "Developed predictive maintenance models for dragliners and mining equipment, reducing unplanned downtime and improving overall equipment efficiency.",
+  "Built Power BI dashboards and operational reports integrating ERP, SCADA, and sensor data, enabling the engineering team to optimize shutdown schedules, resource allocation, and maintenance planning.",
+], primaryColor: primaryColor);
   }
 }
 
-// ReferencesContent (defined)
+
+// ReferenceTile & ReferencesContent Widgets
+//
+// ReferenceTile:
+// A reusable stateless widget that displays a single professional reference in a Card with a ListTile.
+// It shows the reference's name, company, position, and contact details (email and phone) with appropriate styling.
+// The leading icon uses the provided primaryColor, and text elements use the theme's typography for consistent design.
+//
+// ReferencesContent:
+// A stateless widget that aggregates multiple ReferenceTile instances into a vertical Column.
+// This widget represents a list of professional references for a portfolio or CV app.
+// Each ReferenceTile is initialized with the reference's personal and professional details.
+// The primaryColor is passed down to each ReferenceTile to maintain a consistent color scheme across the reference list.
+//
+// Overall:
+// These widgets provide a clean, structured, and visually consistent way to display professional references 
+// in a Flutter portfolio or resume application, with easy customization of colors and content.
+
+class ReferenceTile extends StatelessWidget {
+  final String name;
+  final String company;
+  final String position;
+  final String contact;
+  final Color primaryColor;
+
+  const ReferenceTile({
+    super.key,
+    required this.name,
+    required this.company,
+    required this.position,
+    required this.contact,
+    required this.primaryColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Icon(Icons.person, color: primaryColor),
+        title: Text(name, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(company, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
+            Text(position, style: Theme.of(context).textTheme.bodyMedium),
+            Text(contact, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ReferencesContent extends StatelessWidget {
   final Color primaryColor;
 
@@ -1651,21 +2041,24 @@ class ReferencesContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ReferenceTile(
-          name: "Saildon Sivnanden",
-          position: "Associate Director, Entsika Consulting Services",
-          contact: "ssinanden@entsika.co.za, +27 794 972 305",
-          primaryColor: primaryColor,
-        ),
-        ReferenceTile(
-          name: "Shikar Nunkissor",
-          position: "Process Engineer, Entsika Consulting Services",
-          contact: "+27 843 428 888",
-          primaryColor: primaryColor,
-        ),
-        ReferenceTile(
           name: "Seiphati Nkuna",
-          position: "Business Analyst, Entsika Consulting Services",
-          contact: "nkunas@entsika.co.za, +27 787 489 229",
+          company: "T3 Telecoms SA (Pty) Ltd, Johannesburg, South Africa",
+          position: "Head of BI and Sales Analyst",
+          contact: "info@t3telecoms.co.za, +27 794 972 305",
+          primaryColor: primaryColor,
+        ),
+        ReferenceTile(
+          name: "Francois Nel",
+          company: "Buesquare Brokers (Pty) Ltd, Centurion, South Africa",
+          position: "Derector",
+          contact: "blsq.co.za, +27 826 510 017",
+          primaryColor: primaryColor,
+        ),
+        ReferenceTile(
+          name: "LN Saungweme",
+          company: "Lucient Engineering & Construction, Witbank, South Africa",
+          position: "HR Executive",
+          contact: "Saungweme@lucientengineering.com, +27 65 807 5494",
           primaryColor: primaryColor,
         ),
       ],
@@ -1673,7 +2066,6 @@ class ReferencesContent extends StatelessWidget {
   }
 }
 
-// ProjectsContent (defined)
 class ProjectsContent extends StatelessWidget {
   final Function(Project) onProjectTap;
   final Color primaryColor;
@@ -1705,7 +2097,7 @@ class ProjectsContent extends StatelessWidget {
             ],
           ),
           child: Text(
-            "This portfolio highlights recent projects (2022–2025) from Info-Tech Business Solutions (iTBS) and Entsika Consulting Services, showcasing my expertise as a Python Developer, Data Scientist, and Data Analyst. These initiatives demonstrate strong stakeholder engagement and collaboration capabilities, working closely with clients, executives, and cross-functional teams to deliver innovative, data-driven solutions. With a focus on Advanced Analytics and Power BI, these projects improve business operations and user experiences, driving strategic decisions through actionable insights.",
+           "This portfolio presents recent projects (2022–2025) that reflect my expertise in Software Development, Data Science, and Analytics. These initiatives demonstrate effective stakeholder engagement and collaboration with clients, executives, and cross-functional teams to deliver innovative, data-driven solutions. Leveraging Advanced Analytics, Power BI, and cutting-edge AI technologies including Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG), the projects enhance business operations and user experiences, providing actionable insights to support strategic decision-making.",
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
@@ -1728,7 +2120,6 @@ class ProjectsContent extends StatelessWidget {
   }
 }
 
-// FullCVContent (fixed: pass launchURL to CertificationsContent, use correct children)
 class FullCVContent extends StatelessWidget {
   final Future<void> Function(String) launchURL;
   final Color primaryColor;
@@ -2447,43 +2838,9 @@ class ExperienceCard extends StatelessWidget {
   }
 }
 
-// EducationTile (defined)
-class EducationTile extends StatelessWidget {
-  final String degree;
-  final String institution;
-  final String period;
-  final String details;
-  final Color primaryColor;
 
-  const EducationTile({
-    super.key,
-    required this.degree,
-    required this.institution,
-    required this.period,
-    required this.details,
-    required this.primaryColor,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Icon(Icons.school, color: primaryColor),
-        title: Text(degree, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(institution, style: Theme.of(context).textTheme.bodyMedium),
-            Text(period, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
-            const SizedBox(height: 6),
-            if (details.isNotEmpty) Text(details, style: Theme.of(context).textTheme.bodyMedium),
-          ],
-        ),
-      ),
-    );
-  }
-}
+
 
 // AccomplishmentList (defined)
 class AccomplishmentList extends StatelessWidget {
@@ -2522,40 +2879,6 @@ class AccomplishmentList extends StatelessWidget {
                   ),
                 ))
             .toList(),
-      ),
-    );
-  }
-}
-
-// ReferenceTile (defined)
-class ReferenceTile extends StatelessWidget {
-  final String name;
-  final String position;
-  final String contact;
-  final Color primaryColor;
-
-  const ReferenceTile({
-    super.key,
-    required this.name,
-    required this.position,
-    required this.contact,
-    required this.primaryColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Icon(Icons.person, color: primaryColor),
-        title: Text(name, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(position, style: Theme.of(context).textTheme.bodyMedium),
-            Text(contact, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
-          ],
-        ),
       ),
     );
   }
